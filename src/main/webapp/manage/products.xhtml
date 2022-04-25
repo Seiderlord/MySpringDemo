@@ -1,0 +1,313 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">Produkte</ui:define>
+    <ui:define name="content">
+        <style type="text/css">
+
+            .crud-view .ui-datatable {
+                margin-top: 1rem;
+                border: 2px solid #2E88FF;
+                border-radius: 4px;
+            }
+            .crud-view .ui-datatable th, .crud-view .ui-datatable td {
+                border-top: 1px solid #2E88FF;
+                border-inline: 1px solid #2E88FF;
+            }
+            .crud-view .ui-datatable th:last-child, .crud-view .ui-datatable td:last-child {
+                border-right: none;
+            }
+            .crud-view .ui-datatable th:first-child, .crud-view .ui-datatable td:first-child {
+                border-left: none;
+            }
+            .crud-view .ui-datatable .ui-datatable-data .ui-datatable-odd {
+                background-color: lightgray;
+            }
+            .crud-view .ui-datatable .ui-datatable-data th, .crud-view .ui-datatable .ui-datatable-data td {
+                border-bottom: 1px solid #2E88FF;
+                border-inline: 1px solid #2E88FF;
+            }
+            .crud-view .ui-datatable .ui-datatable-data th:last-child, .crud-view .ui-datatable .ui-datatable-data td:last-child {
+                border-right: none;
+            }
+            .crud-view .ui-datatable .ui-datatable-data th:first-child, .crud-view .ui-datatable .ui-datatable-data td:first-child {
+                border-left: none;
+            }
+            .crud-view .item-image {
+                width: 50px;
+                height: 50px;
+                vertical-align: middle;
+                box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+            }
+            .crud-view .ui-dialog .item-image {
+                width: 250px;
+                margin: 0 auto 2rem auto;
+                display: block;
+            }
+            .crud-view .ui-dialog-footer .ui-button {
+                min-width: 6rem;
+            }
+            .crud-view .ui-datatable .ui-column-filter {
+                display: none;
+            }
+            .crud-view .products-table-header {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-align: center;
+                -ms-flex-align: center;
+                align-items: center;
+                -webkit-box-pack: justify;
+                -ms-flex-pack: justify;
+                justify-content: space-between;
+                -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+                vertical-align: middle;
+            }
+            .crud-view .products-table-header .ui-toggleswitch .ui-toggleswitch-slider {
+                background: lightgray;
+            }
+            .crud-view .products-table-header .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider {
+                background: #2E88FF;
+            }
+            .crud-view .edit-button.ui-button {
+                margin-right: 0.5rem;
+            }
+            .crud-view .orders-subtable {
+                padding: 1rem;
+            }
+            .crud-view .products-table > .ui-datatable-tablewrapper > table > thead > tr > th:nth-child(2) {
+                width: 2rem;
+            }
+            .crud-view .products-table .ui-rating {
+                display: inline-block;
+            }
+
+            @media (max-width: 640px) {
+                .products-table > .ui-datatable-tablewrapper > table > thead > tr > th:nth-child(2) .ui-column-title,
+                .products-table > .ui-datatable-tablewrapper > table > tbody > tr > td:nth-child(2) .ui-column-title {
+                    display: none !important;
+                }
+
+                .products-buttonbar {
+                    -webkit-box-orient: vertical;
+                    -webkit-box-direction: normal;
+                    -ms-flex-direction: column;
+                    flex-direction: column;
+                }
+                .products-buttonbar > div:last-child {
+                    margin-top: 0.5rem;
+                }
+            }
+        </style>
+
+        <p:importEnum type="at.demo.model.ProductType" var="ProductType"
+                      allSuffix="ALL_ENUM_VALUES"/>
+
+        <h:form id="form">
+            <div class="card crud-view" style="height: 75vh;">
+                <p:growl id="messages" showDetail="true" life="2000" sticky="false"/>
+                <p:dataTable id="dt-products" widgetVar="dtProducts" var="product" value="#{productController.products}"
+                             reflow="true"
+                             selection="#{productController.selectedProducts}" rowKey="#{product.id}" scrollable="true"
+                             scrollHeight="500" showGridlines="false" stripedRows="false"
+                             styleClass="products-table">
+<!--                    styleClass="products-table ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">-->
+                    <f:facet name="header">
+                        <div class="products-table-header p-grid">
+                            <span style="font-weight: bold; font-size: large">Produkte-Überblick</span>
+                            <div class="p-justify-between p-align-end p-flex-wrap">
+                                <span class="filter-container ui-input-icon-left p-mr-2">
+                                    <i class="pi pi-search"/>
+                                    <p:inputText id="globalFilter" onkeyup="PF('dtProducts').filter()"
+                                                 placeholder="Search"/>
+                                </span>
+                                <p:toggleSwitch styleClass="p-mr-2" value="#{productController.showDeletedProducts}">
+                                    <p:ajax update="dt-products"/>
+                                </p:toggleSwitch>
+                                <p:commandButton id="delete-products-button"
+                                                 value="#{productController.deleteButtonMessage}"
+                                                 icon="pi pi-trash"
+                                                 actionListener="#{productController.deleteSelectedProducts}"
+                                                 styleClass="ui-button-danger p-mr-2"
+                                                 disabled="#{!productController.hasSelectedProducts()}"
+                                                 update="@this">
+                                    <p:confirm header="Confirmation" message="Delete the selected products?"
+                                               icon="pi pi-exclamation-triangle"/>
+                                </p:commandButton>
+                                <p:commandButton value="New" icon="pi pi-plus"
+                                                 oncomplete="PF('manageProductDialog').show()"
+                                                 styleClass="ui-button-success p-mr-0">
+                                    <p:ajax update=":form:manage-product-content"
+                                            listener="#{productController.openNew}" resetValues="true"/>
+                                </p:commandButton>
+                            </div>
+                        </div>
+                    </f:facet>
+
+                    <p:ajax event="rowSelect" update=":form:dt-products:delete-products-button"/>
+                    <p:ajax event="rowUnselect" update=":form:dt-products:delete-products-button"/>
+                    <p:ajax event="rowSelectCheckbox" update=":form:dt-products:delete-products-button"/>
+                    <p:ajax event="rowUnselectCheckbox" update=":form:dt-products:delete-products-button"/>
+                    <p:ajax event="toggleSelect" update=":form:dt-products:delete-products-button"/>
+
+
+                    <p:column styleClass="ui-selection-column" selectionMode="multiple" exportable="false"/>
+                    <p:column headerText="ID" sortBy="#{product.id}" filterBy="#{product.id}">
+                        <h:outputText value="#{product.id}"/>
+                    </p:column>
+                    <p:column headerText="Image">
+                        <p:graphicImage styleClass="item-image" cache="false" value="#{product.image.inputStream}" stream="false" rendered="#{not empty product.image}"/>
+                    </p:column>
+                    <p:column headerText="Name" sortBy="#{product.name}" filterBy="#{product.name}">
+                        <h:outputText value="#{product.name}"/>
+                    </p:column>
+                    <p:column headerText="Producer" sortBy="#{product.producer}" filterBy="#{product.producer}">
+                        <h:outputText value="#{product.producer}"/>
+                    </p:column>
+                    <p:column headerText="Type" sortBy="#{product.type.name}" filterBy="#{product.type.name}">
+                        <h:outputText value="#{product.type.name}"/>
+                    </p:column>
+                    <p:column headerText="Price" sortBy="#{product.price}">
+                        <h:outputText value="#{product.price}" style="font-weight: 700">
+                            <f:convertNumber currencySymbol="€" type="currency"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column styleClass="ui-checkbox-column" headerText="Enabled" sortBy="#{product.enabled}">
+                        <p:selectBooleanCheckbox value="#{product.enabled}" disabled="true"/>
+                    </p:column>
+                    <p:column styleClass="ui-checkbox-column" headerText="Deleted" sortBy="#{product.deleted}"
+                              rendered="#{productController.showDeletedProducts}">
+                        <p:selectBooleanCheckbox value="#{product.deleted}" disabled="true"/>
+                    </p:column>
+                    <p:column exportable="false" style="width: 8rem; text-align: center;">
+                        <p:commandButton icon="pi pi-cog" update=":form:manage-product-content"
+                                         oncomplete="PF('manageProductDialog').show()"
+                                         styleClass="ui-button-secondary edit-button rounded-button" process="@this">
+                            <f:setPropertyActionListener value="#{product}"
+                                                         target="#{productController.selectedProduct}"/>
+                            <p:resetInput target=":form:manage-product-content"/>
+                        </p:commandButton>
+                        <p:commandButton class="ui-button-danger rounded-button" icon="pi pi-trash" process="@this"
+                                         oncomplete="PF('deleteProductDialog').show()">
+                            <f:setPropertyActionListener value="#{product}"
+                                                         target="#{productController.selectedProduct}"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+
+                <p:dialog header="Product Details" showEffect="fade" modal="true"
+                          widgetVar="manageProductDialog" responsive="true">
+                    <p:outputPanel id="manage-product-content">
+                        <p:outputPanel rendered="#{not empty productController.selectedProduct}">
+                            <div class="p-field p-grid p-justify-center p-align-center p-text-center">
+                                <div class="p-col-12 p-text-bold">
+                                    <p:outputLabel for="@next" value="Image:"/>
+                                </div>
+                                <h:form id="formImage" enctype="multipart/form-data">
+                                    <p:graphicImage cache="false" id="selectedProductId" styleClass="p-col-12"
+                                                    value="#{productController.uploadFile.inputStream}"
+                                                    width="100" height="100" style="vertical-align: middle"
+                                                    stream="false" rendered="#{productController.uploadFile != null}"/>
+                                    <div class="p-col p-justify-center">
+                                        <p:fileUpload id="fileUpload" mode="simple" required="true"
+                                                      skinSimple="true" auto="true"
+                                                      process="@this" update="formImage"
+                                                      listener="#{productController.handleFileUpload}"/>
+                                    </div>
+                                </h:form>
+                            </div>
+
+                            <div class="p-field p-grid">
+                                <p:outputLabel for="name" styleClass="p-col-12" value="Name:"/>
+                                <div class="p-col">
+                                    <p:inputText id="name" value="#{productController.selectedProduct.name}"
+                                                 required="true"/>
+                                    <p:message id="nameMsg" for="name" display="icon" redisplay="false"/>
+                                </div>
+                            </div>
+                            <div class="p-field p-grid">
+                                <p:outputLabel for="type" styleClass="p-col-12" value="Type:"/>
+                                <div class="p-col">
+                                    <p:selectOneMenu id="type" value="#{productController.selectedProduct.type}"
+                                                     effect="fold" required="true" converter="#{productTypeConverter}">
+                                        hideNoSelectionOption="#{not empty productController.selectedProduct.type}">
+                                        <p:ajax update="@this" process="@this"/>
+                                        <f:selectItem itemLabel="Select One" itemValue="#{null}"
+                                                      noSelectionOption="true"/>
+                                        <f:selectItems value="#{ProductType.ALL_ENUM_VALUES}" var="productType"
+                                                       itemLabel="#{productType.name}" itemValue="#{productType}"/>
+                                    </p:selectOneMenu>
+                                    <p:message id="typeMsg" for="type" display="icon" redisplay="false"/>
+                                </div>
+                            </div>
+                            <div class="p-field p-grid">
+                                <p:outputLabel for="description" styleClass="p-col-12" value="Description:"/>
+                                <div class="p-col">
+                                    <p:inputTextarea id="description"
+                                                     value="#{productController.selectedProduct.description}"/>
+                                </div>
+                            </div>
+                            <div class="p-field p-grid">
+                                <p:outputLabel for="producer" styleClass="p-col-12" value="Producer:"/>
+                                <div class="p-col">
+                                    <p:inputText id="producer"
+                                                 value="#{productController.selectedProduct.producer}"/>
+                                </div>
+                            </div>
+                            <div class="p-field p-grid">
+                                <p:outputLabel for="price" styleClass="p-col-12" value="Price:"/>
+                                <div class="p-col">
+                                    <p:inputNumber id="price" value="#{productController.selectedProduct.price}"
+                                                   required="true"
+                                                   symbol=" EUR" symbolPosition="s"
+                                                   decimalSeparator="," thousandSeparator="."/>
+                                    <p:message id="priceMsg" for="price" display="icon" redisplay="false"/>
+                                </div>
+                            </div>
+                            <div class="p-grid">
+                                <div class="p-field p-col">
+                                    <p:outputLabel for="@next" value="Enabled:"/>
+                                    <p:selectBooleanCheckbox value="#{productController.selectedProduct.enabled}"/>
+                                </div>
+                                <div class="p-field p-col">
+                                    <p:outputLabel for="@next" value="Deleted:"/>
+                                    <p:selectBooleanCheckbox value="#{productController.selectedProduct.deleted}"
+                                                             disabled="true"/>
+                                </div>
+                            </div>
+                        </p:outputPanel>
+
+                    </p:outputPanel>
+
+                    <f:facet name="footer">
+                        <p:commandButton value="Save" icon="pi pi-check"
+                                         actionListener="#{productController.saveProduct}"
+                                         update="manage-product-content" process="manage-product-content @this"/>
+                        <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageProductDialog').hide()"
+                                         class="ui-button-secondary"/>
+                    </f:facet>
+                </p:dialog>
+
+                <p:confirmDialog widgetVar="deleteProductDialog" showEffect="fade" width="300"
+                                 message="Delete the product?" header="Confirm" severity="warn">
+                    <p:toggleSwitch value="#{productController.permanentDeletion}"
+                                    rendered="#{sessionInfoBean.hasRole('ADMIN')}">
+                        <p:ajax update=":form:deleteProductDialogYesButton"/>
+                    </p:toggleSwitch>
+                    <p:commandButton id="deleteProductDialogYesButton"
+                                     value="#{productController.confirmDeleteButtonMessage}" icon="pi pi-check"
+                                     actionListener="#{productController.deleteProduct}"
+                                     process="@this" oncomplete="PF('deleteProductDialog').hide()"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                     onclick="PF('deleteProductDialog').hide()"/>
+                </p:confirmDialog>
+            </div>
+        </h:form>
+    </ui:define>
+
+
+</ui:composition>

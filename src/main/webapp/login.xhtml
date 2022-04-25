@@ -1,0 +1,52 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:ng="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="content">
+
+        <form id="login_form" action="#{request.contextPath}/login" method="post">
+
+            <div class="flex align-items-center justify-content-center" style="height: 75vh;">
+                <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
+
+                    <div class="text-center mb-5">
+                        <p:graphicImage name="dummy-logo.jpg" library="default"
+                                        height="150" styleClass="mb-3"/>
+                        <div class="text-900 text-3xl font-medium mb-3">Welcome Back</div>
+                        <span class="text-600 font-medium line-height-3">Don't have an account?</span>
+                        <a class="font-medium no-underline ml-2 text-blue-500 cursor-pointer" href="#{request.contextPath}/register.xhtml">Create today!</a>
+                    </div>
+
+                    <div>
+
+                        <label for="username" class="block text-900 font-medium mb-2">Username</label>
+                        <p:inputText id="username" ype="text" required="true" styleClass="w-full mb-3"/>
+
+                        <label for="password" class="block text-900 font-medium mb-2">Password</label>
+                        <p:inputText id="password" type="password" required="true" styleClass="w-full mb-3"/>
+                        <p:message for="errorHandler"/>
+
+                        <div class="flex align-items-center justify-content-between mb-6">
+                            <div class="flex align-items-center">
+                                <p:selectBooleanCheckbox id="_remember_me_checkbox" styleClass="mr-2"/>
+                                <label for="_remember_me_checkbox">Remember me</label>
+                            </div>
+                            <a class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">Forgot your password?</a>
+                        </div>
+                        <f:metadata>
+                            <f:viewParam id="errorHandler" name="error" value="#{loginErrorBean.type}"/>
+                            <f:viewAction action="#{loginErrorBean.getMessage}"/>
+                        </f:metadata>
+                        <button type="submit" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" icon="pi pi-user">
+                            <span class="ui-button-text">Sign In</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </ui:define>
+</ui:composition>

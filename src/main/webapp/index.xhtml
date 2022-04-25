@@ -1,0 +1,26 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:ng="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">Index-Page</ui:define>
+    <ui:define name="content">
+        <div class="d-flex flex-column" align="center" style="height: 75vh;">
+            <h1 class="mt-10">Welcome to my demo project</h1>
+            <div class="mb-10">
+                <div class="card">
+                    <h5>Fade</h5>
+                    <p:imageSwitch effect="fade" id="fadeEffect">
+                        <ui:repeat value="#{imagesView.images}" var="image" id="fadeEffectImages">
+                            <a>
+                                <p:graphicImage name="/#{image}" id="image2" library="default" height="200px"/>
+                            </a>
+                        </ui:repeat>
+                    </p:imageSwitch>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

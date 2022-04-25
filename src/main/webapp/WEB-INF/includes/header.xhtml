@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<body class="body">
+<ui:composition>
+    <div class="card">
+        <h:form>
+        <p:menubar styleClass="flex-wrap align-items-center justify-content-center" style="background-color: lightblue; border-bottom: 2px darkgreen solid">
+
+            <p:menuitem url="#{request.contextPath}/index.html">
+                <p:graphicImage name="dummy-logo.jpg" library="default"
+                                height="50" styleClass="mr-auto"/>
+            </p:menuitem>
+            <p:menuitem value="Home" url="/index.xhtml"/>
+            <p:submenu label="Tabelle">
+                <p:menuitem value="Produkte" url="/manage/products.xhtml"/>
+            </p:submenu>
+            <p:menuitem value="Error Page" url="/error.xhtml"/>
+            <f:facet name="options" >
+                <div class="align-items-center flex-1 justify-content-center">
+                <p:button styleClass="ui-button-info my-3" icon="pi pi-fw pi-sign-in" value="Login" href="/login.xhtml" rendered="#{!sessionInfoBean.loggedIn}"/>
+                <p:button styleClass="ui-button-info my-3" icon="pi pi-fw pi-sign-out" value="Logout" href="/perform-logout" rendered="#{sessionInfoBean.loggedIn}"/>
+                    <p:commandButton icon="pi pi-arrow-left" type="button" onclick="PF('sidebar').show()" styleClass="mx-2" rendered="#{sessionInfoBean.loggedIn}"/>
+                </div>
+            </f:facet>
+
+        </p:menubar>
+    </h:form>
+    </div>
+</ui:composition>
+</body>
+</html>
+

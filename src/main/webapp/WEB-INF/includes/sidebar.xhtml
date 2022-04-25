@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<body class="body">
+<ui:composition>
+    <p:sidebar widgetVar="sidebar" position="right">
+        <div class="card">
+            <h:form id="sidebarForm">
+                <div class="flex justify-content-center">
+                    <p:avatar icon="pi pi-fw pi-user" size="xlarge"   shape="circle" style="height: 150px; width: 150px; borderRadius: 50%">
+                        <p:graphicImage cache="false" value="#{avatarImageLoader.avatarImage}" rendered="#{sessionInfoBean.loggedIn}"/>
+                    </p:avatar>
+                </div>
+                <div class="flex justify-content-center">
+                    <h3>#{sessionInfoBean.currentUserName}</h3>
+                </div>
+                <div class="flex justify-content-center">
+                    <h3>#{sessionInfoBean.currentUser.firstName} #{sessionInfoBean.currentUser.lastName}</h3>
+                </div>
+
+                <p:panelMenu>
+                    <p:submenu label="Meine Daten" rendered="#{sessionInfoBean.isLoggedIn()}">
+                        <p:menuitem value="Mein Profil" />
+                        <p:menuitem value="Meine Benachrichtungen"/>
+                        <p:menuitem value="Meine Einstellungen"/>
+                        <p:menuitem value="Meine Aufträge"/>
+                    </p:submenu>
+                    <p:submenu label="Administrative Aktionen" rendered="#{sessionInfoBean.hasAnyRole('ADMIN','MANAGER')}">
+                        <p:menuitem value="Manage Users"/>
+                        <p:menuitem value="Manage Persons"/>
+                        <p:menuitem value="Manage Products"/>
+                        <p:menuitem value="Manage Orders"/>
+                        <p:menuitem value="Manage Locations"/>
+                        <p:menuitem value="View Audit Log Entries"/>
+                    </p:submenu>
+                </p:panelMenu>
+                <div class="flex justify-content-center">
+                    <p:button styleClass="ui-button-info my-3" icon="pi pi-fw pi-sign-out" value="Logout" href="/perform-logout"
+                              rendered="#{sessionInfoBean.loggedIn}"/>
+                </div>
+            </h:form>
+        </div>
+    </p:sidebar>
+</ui:composition>
+</body>
+</html>
+
